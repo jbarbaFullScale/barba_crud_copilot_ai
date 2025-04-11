@@ -10,6 +10,21 @@ def index():
     contacts = Contact.query.all()
     return render_template('index.html', contacts=contacts)
 
+# Search contacts
+@contact_bp.route('/search', methods=['GET'])
+def search_contacts():
+    search_query = request.args.get('search', '').strip()
+    if search_query:
+        contacts = Contact.query.filter(
+            Contact.name.ilike(f'%{search_query}%') |
+            Contact.email.ilike(f'%{search_query}%') |
+            Contact.address.ilike(f'%{search_query}%') |
+            Contact.contact_number.ilike(f'%{search_query}%')
+        ).all()
+    else:
+        contacts = Contact.query.all()
+    return render_template('index.html', contacts=contacts, search_query=search_query)
+
 # Create contact
 @contact_bp.route('/create', methods=['GET', 'POST'])
 def create_contact():

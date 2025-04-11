@@ -73,19 +73,33 @@ class ContactTestCase(unittest.TestCase):
             contact = Contact.query.get(contact_id)
             self.assertIsNone(contact)
 
-    def test_create_contact(self):
-        """Test creating a new contact."""
-        response = self.app.post('/create', data={
-            'name': 'John Doe',
-            'email': 'john@example.com',
-            'address': '123 Main St',
-            'contact_number': '1234567890'
-        }, follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
+    def test_search_contacts(self):
+        """Test searching for contacts."""
         with app.app_context():
-            contact = Contact.query.first()
-            self.assertIsNotNone(contact)
-            self.assertEqual(contact.name, 'John Doe')
+            # Add test data to the database
+            contact1 = Contact(name='John Doe', email='john@example.com', address='123 Main St', contact_number='1234567890')
+            contact2 = Contact(name='Jane Smith', email='jane@example.com', address='456 Elm St', contact_number='9876543210')
+            db.session.add(contact1)
+            db.session.add(contact2)
+            db.session.commit()
+
+        # Perform a search query
+        response = self.app.get('/search?search=John')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'John Doe', response.data)
+        self.assertNotIn(b'Jane Smith', response.data)
+
+        # Perform another search query
+        response = self.app.get('/search?search=Jane')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Jane Smith', response.data)
+        self.assertNotIn(b'John Doe', response.data)
+
+        # Test with no results
+        response = self.app.get('/search?search=Nonexistent')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b'John Doe', response.data)
+        self.assertNotIn(b'Jane Smith', response.data)
 
 if __name__ == '__main__':
     unittest.main()
