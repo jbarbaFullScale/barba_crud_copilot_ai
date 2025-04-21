@@ -7,7 +7,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     """Development configuration."""
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///crud_copilot.db')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 

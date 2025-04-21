@@ -94,3 +94,13 @@ docker-compose up --build
 docker-compose down
 ```
 
+## Migrate DB
+
+```
+docker exec -it crud_copilot-app-1 flask db migrate -m "Create contact table"
+```
+
+## Upgrade Flask DB
+```
+docker exec -it crud_copilot-app-1 flask db upgrade
+```

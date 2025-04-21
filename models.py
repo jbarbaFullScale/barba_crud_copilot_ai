@@ -5,7 +5,7 @@ class Contact(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
     name = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     contact_number = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())

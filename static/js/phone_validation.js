@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (contactNumberInput) {
         contactNumberInput.addEventListener('input', function() {
             const phoneNumber = contactNumberInput.value;
-            const phoneNumberPattern = /^\d{10}$/;
+            const phoneNumberPattern = /^\d{11}$/;
             if (!phoneNumberPattern.test(phoneNumber)) {
-                contactNumberInput.setCustomValidity('Please enter a valid 10-digit phone number');
+                contactNumberInput.setCustomValidity('Please enter a valid 11-digit phone number');
             } else {
                 contactNumberInput.setCustomValidity('');
             }

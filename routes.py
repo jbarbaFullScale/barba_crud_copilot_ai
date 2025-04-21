@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for
+from flask import Blueprint, request, render_template, redirect, url_for
+from sqlite3 import IntegrityError
 from extensions import db
 from models import Contact
 
@@ -33,12 +34,16 @@ def create_contact():
         email = request.form['email']
         address = request.form['address']
         contact_number = request.form['contact_number']
-
-        new_contact = Contact(
-            name=name, email=email, address=address, contact_number=contact_number
-        )
-        db.session.add(new_contact)
-        db.session.commit()
+        try:
+            new_contact = Contact(
+                name=name, email=email, address=address, contact_number=contact_number
+            )
+            db.session.add(new_contact)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            error_message = f"Contact Email already exists: {email}"
+            return render_template('create.html', error_message=error_message)
         return redirect(url_for('contact.index'))
     return render_template('create.html')
 
@@ -51,8 +56,12 @@ def update_contact(id):
         contact.email = request.form['email']
         contact.address = request.form['address']
         contact.contact_number = request.form['contact_number']
-
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            error_message = f"Contact Email already exists: {contact.email}"
+            return render_template('update.html', contact=contact, error_message=error_message)
         return redirect(url_for('contact.index'))
     return render_template('update.html', contact=contact)
 
