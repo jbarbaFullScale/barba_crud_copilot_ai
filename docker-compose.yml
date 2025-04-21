@@ -7,14 +7,12 @@ services:
     ports:
       - "5000:5000"
     environment:
-      FLASK_ENV: development
-      DATABASE_URL: postgresql://postgres:12345@db/crud_copilot
+      - FLASK_ENV=development
     depends_on:
       - db
-    volumes:
-      - .:/app
-      - /app/__pycache__/  # Prevent caching issues during hot reloading
-    command: flask run --host=0.0.0.0 --port=5000 --reload  # Enable hot reloading
+    command: >
+      sh -c "flask db upgrade &&
+             flask run --host=0.0.0.0 --port=5000"
 
   db:
     image: postgres:14
@@ -24,8 +22,6 @@ services:
       POSTGRES_DB: crud_copilot
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:

@@ -1,10 +1,9 @@
 from flask import Flask
 from extensions import db
 from routes import contact_bp
+from flask_migrate import Migrate
+from models import Contact
 
-from flask import Flask
-from extensions import db
-from routes import contact_bp
 import os
 
 app = Flask(__name__)
@@ -17,6 +16,7 @@ else:
     app.config.from_object('config.DevelopmentConfig')
 
 db.init_app(app)
+migrate = Migrate(app, db)  # Initialize Flask-Migrate
 
 # Register the blueprint
 app.register_blueprint(contact_bp)
